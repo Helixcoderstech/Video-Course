@@ -19,12 +19,13 @@ const store = async (req, res) => {
             role: req.body.role,
             password: req.body.password,
             courses: [{
-                name: req.body.course_name,
-                progress: req.body.course_progress,
+                course_id: req.body.course.course_id,
+                name: req.body.course.name,
+                progress: req.body.course.progress,
             }]
         })
         const data = await user.save()
-        if (!data) throw new Error('No Data Found')
+        if (!data) throw new Error('Unable to save Data')
 
         res.status(200).send(data)
     } catch (err) {
@@ -51,10 +52,17 @@ const update = async (req, res) => {
             name: req.body.name,
             email: req.body.email,
             role: req.body.role,
-            password: req.body.password
+            password: req.body.password,
+            courses: [{
+                course_id: req.body.course.course_id,
+                name: req.body.course.name,
+                progress: req.body.course.progress,
+            }]
         }
         const data = await User.updateOne({ _id: id}, {
-            $set: user
+            $push: user
+        },{
+            upsert: true
         })
         if (!data) throw new Error('No Data Found')
 
